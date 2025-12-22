@@ -1,0 +1,7 @@
+name: Diabetes_ML_Training
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python modelling.py"
