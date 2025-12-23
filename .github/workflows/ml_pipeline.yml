@@ -39,7 +39,7 @@ jobs:
       shell: bash -l {0}
       run: |
         cd mlproject
-        mlflow run . --experiment-name Diabetes_Prediction_CI
+        mlflow run
       shell: bash -l {0}
         
     - name: 📈 Display results
