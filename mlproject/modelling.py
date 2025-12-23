@@ -13,8 +13,9 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
-# Setup MLflow
+# Setup MLflow dengan autologging
 mlflow.set_experiment("Diabetes_Prediction_CI")
+mlflow.autolog()
 
 def load_preprocessed_data():
     """Load data yang sudah dipreprocess"""
@@ -55,54 +56,25 @@ def evaluate_model(model, X_test, y_test):
     return metrics
 
 def train_model(model_name, model, X_train, X_test, y_train, y_test):
-    """Train model dengan MLflow tracking"""
+    """Train model dengan MLflow autologging"""
     
     with mlflow.start_run(run_name=model_name):
         print(f"\n{'='*70}")
         print(f"TRAINING: {model_name}")
         print(f"{'='*70}")
         
-        # Train model
+        # Train model - autolog akan otomatis mencatat parameters, metrics, dan model
         model.fit(X_train, y_train)
         print(f"✓ Model trained successfully")
         
-        # Evaluate
+        # Evaluate untuk display (autolog sudah mencatat metrics)
         metrics = evaluate_model(model, X_test, y_test)
         
-        # Log parameters
-        mlflow.log_param("model_type", model_name)
-        mlflow.log_param("train_samples", len(X_train))
-        mlflow.log_param("test_samples", len(X_test))
-        
-        # Log metrics
+        print(f"  Model Metrics:")
         for metric_name, metric_value in metrics.items():
-            mlflow.log_metric(metric_name, metric_value)
             print(f"  {metric_name}: {metric_value:.4f}")
         
-        # Log model
-        mlflow.sklearn.log_model(model, "model")
-        
-        # Create and log confusion matrix
-        from sklearn.metrics import confusion_matrix
-        y_pred = model.predict(X_test)
-        cm = confusion_matrix(y_test, y_pred)
-        
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                    xticklabels=['Non-Diabetes', 'Diabetes'],
-                    yticklabels=['Non-Diabetes', 'Diabetes'])
-        plt.title(f'Confusion Matrix - {model_name}')
-        plt.ylabel('Actual')
-        plt.xlabel('Predicted')
-        plt.tight_layout()
-        
-        # Save confusion matrix
-        cm_filename = f'confusion_matrix_{model_name}.png'
-        plt.savefig(cm_filename)
-        mlflow.log_artifact(cm_filename)
-        plt.close()
-        
-        print(f"✓ MLflow tracking completed for {model_name}")
+        print(f"✓ MLflow autologging completed for {model_name}")
         
         return metrics
 
@@ -111,6 +83,7 @@ def main():
     
     print("\n" + "="*70)
     print("DIABETES PREDICTION - MODEL TRAINING (CI/CD)")
+    print("MLflow Tracking: AUTOLOGGING")
     print("="*70)
     
     # Load data
@@ -142,7 +115,7 @@ def main():
     print(f"\n🏆 Best Model: {best_model}")
     print(f"   Accuracy: {results_df.loc[best_model, 'accuracy']:.4f}")
     
-    print("\n✅ CI/CD Training completed successfully!")
+    print("\n✅ CI/CD Training completed successfully with MLflow autologging!")
 
 if __name__ == "__main__":
     main()

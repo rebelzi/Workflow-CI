@@ -32,10 +32,10 @@ jobs:
         ls -la mlproject/
         ls -la mlproject/diabetes_preprocessing/
         
-    - name: 🤖 Run ML Training
+    - name: 🤖 Run ML Training with MLflow Project
       run: |
         cd mlproject
-        python modelling.py
+        mlflow run . --experiment-name Diabetes_Prediction_CI
         
     - name: 📈 Display results
       run: |
