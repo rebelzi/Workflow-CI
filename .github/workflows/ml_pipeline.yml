@@ -39,10 +39,10 @@ jobs:
       shell: bash -l {0}
       run: |
         cd mlproject
-        mlflow run
-      shell: bash -l {0}
+        mlflow run . --experiment-name Diabetes_Prediction_CI
         
     - name: 📈 Display results
+      shell: bash -l {0}
       run: |
         echo "✅ Training completed successfully!"
         ls -la mlproject/
@@ -56,10 +56,10 @@ jobs:
           mlproject/mlruns/
         retention-days: 30
         
-    - shell: bash -l {0}
+    - name: 📝 Training summary
+      shell: bash -l {0}
       run: |
         echo "### 🎉 Training Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Models trained with MLflow Projectmmary" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ Models trained: Logistic Regression, Decision Tree, Random Forest" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Models trained with MLflow Project: Logistic Regression, Decision Tree, Random Forest" >> $GITHUB_STEP_SUMMARY
         echo "- 📊 Artifacts uploaded successfully" >> $GITHUB_STEP_SUMMARY
         echo "- 🕒 Timestamp: $(date)" >> $GITHUB_STEP_SUMMARY
